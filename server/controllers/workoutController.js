@@ -33,6 +33,25 @@ const createWorkout = async (req, res) => {
     const { title, load, reps } = req.body;
     // we try to create a new workout to the workouts model 
     // we add doc to db
+
+
+    /* error handling */
+    // here we want to detect which fields are empty
+    // before they are sent to the db
+
+    let emptyFields = [];
+
+    if(!title) emptyFields.push("title");
+    if(!load) emptyFields.push("load");
+    if(!reps) emptyFields.push("reps");
+
+    if(emptyFields.length > 0) {
+
+        console.log(emptyFields);
+        return res.status(400).json({ error: `Workout cannot be created. Please provide ${emptyFields.join(" and ")}`, emptyFields})
+    }
+    
+    // if there are no empty fields we can create the workout
     try {
         const workout = await Workout.create({
             title,
